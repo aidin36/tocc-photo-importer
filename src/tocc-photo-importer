@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Exit on any error.
+set -e
+
+# Checking arguments.
+if (( $# != 2 ))
+then
+  echo "Invalid number of arguments."
+  echo "Usage: tocc-photo-importer /path/to/tocc-managed-files/ /path/to/photos"
+  echo "For example: tocc-photo-importer /media/camera/*.jpg"
+  exit 100
+fi
+
+# Getting general tags.
+echo "Enter general tags (Tags that should be assigned to all files)."
+echo -n ": "
+read GENERAL_TAGS
+
+# Showing photos one by one, and asking for tags.
+for photo_file in $2
+do
+  echo "Showing "$photo_file
+  feh -Z -F $photo_file
+  echo "Tags for this photo (type IGNORE to ignore this photo): "
+  read TAGS
+  if [ "$TAGS" = "IGNORE" ]
+   then
+    continue
+  fi
+  echo "importing file into tocc..."
+  tocc --base-path $1 --import $photo_file --assign $GENERAL_TAGS $TAGS
+done
+
+echo "All done :-)"
