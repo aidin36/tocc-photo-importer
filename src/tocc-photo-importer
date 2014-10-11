@@ -4,11 +4,14 @@
 set -e
 
 # Checking arguments.
-if (( $# != 2 ))
+if (( $# < 2 ))
 then
   echo "Invalid number of arguments."
-  echo "Usage: tocc-photo-importer /path/to/tocc-managed-files/ /path/to/photos"
-  echo "For example: tocc-photo-importer /media/camera/*.jpg"
+  echo "Usage: tocc-photo-importer /path/to/tocc-managed-files/ photo-1 [photo-2 ...]"
+  echo "For example: tocc-photo-importer /opt/tocc-managed/ /media/camera/01.jpg"
+  echo
+  echo "You can use tools like find, to import a batch of photos:"
+  echo "  tocc-photo-importer /opt/tocc-managed/ `find /media/camera/ -name \*.jpg -print | xargs`"
   exit 100
 fi
 
@@ -18,10 +21,10 @@ echo -n ": "
 read GENERAL_TAGS
 
 # Showing photos one by one, and asking for tags.
-for photo_file in $2
+for photo_file in ${@:2}
 do
   echo "Showing "$photo_file
-  feh -Z -F $photo_file
+  feh -Z -F "$photo_file"
   echo "Tags for this photo (type IGNORE to ignore this photo): "
   read TAGS
   if [ "$TAGS" = "IGNORE" ]
@@ -29,7 +32,7 @@ do
     continue
   fi
   echo "importing file into tocc..."
-  tocc --base-path $1 --import $photo_file --assign $GENERAL_TAGS $TAGS
+  tocc --base-path "$1" --import "$photo_file" --assign $GENERAL_TAGS $TAGS
 done
 
 echo "All done :-)"
