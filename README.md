@@ -1,7 +1,7 @@
 tocc-photo-importer
 ===================
 
-A bash script to easily import photos into Tocc.
+A bash script that helps you easily import photos into Tocc.
 
 Tocc is here:
 
